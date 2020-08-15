@@ -13,7 +13,7 @@ module.exports = {
       console.log('No token')
       await this.getToken()
     }
-    if (this.token.created_at + this.token.expires_in * 1000 >= Date.now()) {
+    if (this.token.created_at + this.token.expires_in * 1000 <= Date.now()) {
       console.log('getting new token, old expires')
       await this.getToken()
     }
