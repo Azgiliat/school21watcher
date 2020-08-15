@@ -8,16 +8,18 @@ const bot = new TelegramBot(token, {polling: true})
 module.exports = {
   bot,
   chatIds: [],
-  createBot() {
-    fs.readFile(path.resolve(__dirname, 'chats.json'), (err, data) => {
-      if (err) {
-        console.error(err)
-        console.log('Error in read chats from json')
-      } else {
-        console.log('reading')
-        console.log(JSON.parse(data).chats)
-        this.chatIds = JSON.parse(data).chats
-      }
+  async createBot() {
+    await new Promise((resolve, reject) => {
+      fs.readFile(path.resolve(__dirname, 'chats.json'), (err, data) => {
+        if (err) {
+          console.error(err)
+          console.log('Error in read chats from json')
+          reject()
+        } else {
+          this.chatIds = JSON.parse(data).chats
+          resolve()
+        }
+      })
     })
 
     this.bot.onText(/\/giveChatId/, (msg, match) => {
