@@ -1,0 +1,14 @@
+{
+  "name": "exams42",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon npm run start"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "node-telegram-bot-api": "^0.50.0",
+    "nodemon": "^2.0.4"
+  }
+}
