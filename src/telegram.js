@@ -24,9 +24,9 @@ module.exports = {
       if (this.chatIds.findIndex(id => id === msg.chat.id) === -1) {
         console.log(`New caht id ${msg.chat.id}`)
         this.chatIds.push(msg.chat.id)
-        fs.writeFile(path.resolve(__dirname, 'chats.json'), {
-          chats: JSON.stringify(this.chatIds)
-        }, err => {
+        fs.writeFile(path.resolve(__dirname, 'chats.json'), JSON.stringify({
+          chats: this.chatIds
+        }), err => {
           console.error(err)
           console.log('Error in writing chats to json')
         })

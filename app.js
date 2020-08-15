@@ -2,7 +2,7 @@ const user = require('./src/user')
 const bot = require('./src/telegram')
 
 const main = async () => {
-  bot.createBot()
+  //bot.createBot()
   await user.initUser()
   user.watchEvents()
 }
