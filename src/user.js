@@ -53,7 +53,6 @@ class User {
   }
 
   async checkExams() {
-    console.log(this)
     const exams = await axios.getExamsByCursAndCampus(this.myCursus[this.myCursus.length - 1].cursus_id, this.myCampus.id)
     exams.forEach(exam => {
       if (this.exams.findIndex(item => item.id === exam.id) === -1) {
