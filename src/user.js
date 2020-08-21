@@ -9,7 +9,34 @@ class User {
     this.myCampus = {}
     this.myCursus = []
     this.events = []
+    this.exams = []
     this.emitter = new EventEmitter()
+  }
+
+  writeFile(name, data) {
+    return new Promise((resolve, reject) => {
+      fs.appendFile(path.resolve(__dirname, `${name}.json`), JSON.stringify(data), err => {
+        if (err) {
+          console.error('Error whilw writing to file')
+          reject()
+        } else {
+          resolve()
+        }
+      })
+    })
+  }
+
+  readFile(name) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path.resolve(__dirname, `${name}.json`), (err, data) => {
+        if (err) {
+          console.log('Error in read from json')
+          reject()
+        } else {
+          resolve(JSON.parse(data))
+        }
+      })
+    })
   }
 
   initUser() {
@@ -18,52 +45,29 @@ class User {
         this.user = res
         this.myCampus = this.user.campus[0]
         this.myCursus = this.user.cursus_users
-        return new Promise((resolve, reject) => {
-          fs.readFile(path.resolve(__dirname, 'events.json'), (err, data) => {
-            if (err) {
-              console.error(err)
-              console.log('Error in read events from json')
-              reject()
-            } else {
-              if (JSON.parse(data).events.length) {
-                this.events = JSON.parse(data).events
-              }
-              resolve()
-            }
-          })
-        })
+        return this.readFile('exams')
+          .then(data => {
+            this.exams = data
+          }, () => this.exams = [])
       })
   }
 
-  watchEvents() {
-    console.log('start watching events')
+
+
+  async watchEvents() {
+    console.log('start watching exams')
     this.emitter.emit('startWatch')
     setInterval(async () => {
-      console.log('Getting events again...')
-      const events = await axios.getEventsByCursAndCampus(this.myCursus[this.myCursus.length - 1].cursus_id, this.myCampus.id)
-      events.forEach(event => {
-        if (event.kind === 'exam' || event.kind === 'exams' || event.kind === 'EXAM') {
-          this.emitter.emit('gotExam', event)
-        }
-        if (this.events.findIndex(item => item.id === event.id) === -1) {
-          this.emitter.emit('newEvent', event)
-          console.log('new event', event.name)
+      console.log('Getting exams again...')
+      const exams = await axios.getExamsByCursAndCampus(this.myCursus[this.myCursus.length - 1].cursus_id, this.myCampus.id)
+      exams.forEach(exam => {
+        if (this.exams.findIndex(item => item.id === exam.id) === -1) {
+          this.emitter.emit('newExam', exam)
+          console.log('new exam', exam.name)
         }
       })
-      this.events = events
-      await new Promise((resolve, reject) => {
-        fs.writeFile(path.resolve(__dirname, 'events.json'), JSON.stringify({
-          events: events
-        }), err => {
-          if (err) {
-            console.error(err)
-            console.log('Error in writing events to json')
-            reject()
-          } else {
-            resolve()
-          }
-        })
-      })
+      this.exams = exams
+      await this.writeFile('exams', {exams})
     }, 60000)
   }
 }

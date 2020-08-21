@@ -50,7 +50,7 @@ module.exports = {
       })
     })
 
-    user.emitter.on('gotExam', evt => {
+    user.emitter.on('newExam', evt => {
       this.chatIds.forEach(id => {
         bot.sendMessage(id, `ЭКЗАМЕН!!! ${evt.name}`)
       })

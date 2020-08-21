@@ -103,5 +103,19 @@ module.exports = {
         console.error(err)
         console.log('Error in getting events by curssus and campus')
       })
+  },
+  getExamsByCursAndCampus(cursId, campusId) {
+    console.log('Getting exams by curs and campus...')
+    return this.request({
+      url: `/v2/campus/${campusId}/cursus/${cursId}/exams`
+    })
+      .then(res => {
+        console.log('Got exams by campus and cursus!')
+        return res.data
+      })
+      .catch(err => {
+        console.error(err)
+        console.log('Error in getting exams by curssus and campus')
+      })
   }
 }
